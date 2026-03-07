@@ -1,0 +1,2 @@
+FROM docker.io/dspace/dspace-angular:latest-dist
+EXPOSE 4000
