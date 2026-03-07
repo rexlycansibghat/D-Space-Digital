@@ -1,0 +1,18 @@
+FROM openjdk:17-jdk-slim
+
+WORKDIR /dspace
+
+RUN apt-get update && apt-get install -y \
+    maven \
+    git \
+    curl \
+    unzip \
+    && rm -rf /var/lib/apt/lists/*
+
+COPY . /dspace
+
+RUN mvn -U clean package -DskipTests
+
+EXPOSE 8080
+
+CMD ["java","-jar","dspace-server-webapp/target/dspace-server-webapp.jar"]
