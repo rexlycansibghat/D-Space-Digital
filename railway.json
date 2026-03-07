@@ -1,6 +1,6 @@
 {
   "$schema": "https://railway.app/railway.schema.json",
-  "deploy": {
-    "dockerfile": "Dockerfile.railway"
+  "build": {
+    "dockerfilePath": "Dockerfile.railway"
   }
 }
