@@ -10,39 +10,48 @@
 *.ipr
 *.iws
 
-# Maven
+# Maven build artifacts
+target/
+build/
+dist/
 */target/
-dspace/modules/*/target/
 **/target/
+dspace/modules/*/target/
 
-# Docker
-Dockerfile.*
-docker-compose*.yml
-docker-compose*.yaml
-dspace/src/main/docker/dspace-postgres-loadsql
-dspace/src/main/docker/README.md
-dspace/src/main/docker-compose/
-
-# Node.js (if any)
+# Node.js
 node_modules/
 npm-debug.log*
 yarn-debug.log*
 yarn-error.log*
 
-# Logs
+# Docker files
+Dockerfile.*
+docker-compose*.yml
+docker-compose*.yaml
+docker-data/
+docker-volumes/
+
+# DSpace specific large directories
+assetstore/
+solr/
+postgres/
 logs/
+tmp/
+
+# Logs
 *.log
 
-# OS
+# OS files
 .DS_Store
 Thumbs.db
+**/.DS_Store
 
 # Temporary files
 *.tmp
 *.temp
 .cache/
 
-# Documentation
+# Documentation (exclude for build)
 *.md
 docs/
 README*
