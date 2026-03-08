@@ -1,34 +1,32 @@
-# Multi-stage build for Railway
-FROM eclipse-temurin:17-jdk-jammy as builder
+# ---------- Build stage ----------
+FROM eclipse-temurin:17-jdk-jammy AS builder
 
 WORKDIR /dspace
 
-# Install build dependencies
 RUN apt-get update && apt-get install -y \
-    maven \
-    git \
-    curl \
-    unzip \
+    maven git curl unzip \
     && rm -rf /var/lib/apt/lists/*
 
-# Set Maven memory limit for Railway
-ENV MAVEN_OPTS="-Xmx1024m"
-
-# Copy only what's needed for Maven build
+# Copy only required build files first (for caching)
 COPY pom.xml .
 COPY dspace/ ./dspace/
 
-# Build DSpace with parallel builds and memory optimization
-RUN mvn -T 1C -U clean package -DskipTests -Dmaven.test.skip=true -Djava.awt.headless=true
+# Increase memory for Maven
+ENV MAVEN_OPTS="-Xmx1024m"
 
-# Runtime stage
+# Download dependencies first
+RUN mvn -B -q -e -DskipTests dependency:go-offline
+
+# Build DSpace
+RUN mvn -B clean package -DskipTests
+
+# ---------- Runtime stage ----------
 FROM eclipse-temurin:17-jre-jammy
 
 WORKDIR /dspace
 
-# Copy only the built JAR
-COPY --from=builder /dspace/dspace-server-webapp/target/dspace-server-webapp.jar .
+COPY --from=builder /dspace /dspace
 
 EXPOSE 8080
 
-CMD ["java","-jar","dspace-server-webapp.jar"]
+CMD ["java","-jar","dspace-server-webapp/target/dspace-server-webapp.jar"]
