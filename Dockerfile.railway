@@ -9,7 +9,9 @@ RUN apt-get update && apt-get install -y \
     unzip \
     && rm -rf /var/lib/apt/lists/*
 
-COPY . .
+COPY . /build
+
+WORKDIR /build/dspace
 
 RUN mvn -U clean package -DskipTests
 
@@ -23,4 +25,4 @@ RUN /dspace/bin/dspace install
 
 EXPOSE 8080
 
-CMD ["/dspace/bin/dspace", "run"]
+CMD ["/dspace/bin/dspace","run"]

@@ -1,61 +1,6 @@
-# Git
-.git/
-.gitignore
-
-# IDE
-.idea/
-.vscode/
-.settings/
-*.iml
-*.ipr
-*.iws
-
-# Maven build artifacts
-target/
-build/
-dist/
-*/target/
-**/target/
-dspace/modules/*/target/
-
-# Node.js
-node_modules/
-npm-debug.log*
-yarn-debug.log*
-yarn-error.log*
-
-# Docker files
-Dockerfile.*
-docker-compose*.yml
-docker-compose*.yaml
-docker-data/
-docker-volumes/
-
-# DSpace specific large directories
-assetstore/
-solr/
-postgres/
-logs/
-tmp/
-
-# Logs
+.git
+node_modules
+target
 *.log
-
-# OS files
-.DS_Store
-Thumbs.db
-**/.DS_Store
-
-# Temporary files
-*.tmp
-*.temp
-.cache/
-
-# Documentation (exclude for build)
-*.md
-docs/
-README*
-
-# Test files
-**/*Test*
-**/test/**
+logs/
+assetstore/
