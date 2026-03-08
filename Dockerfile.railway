@@ -1,32 +1,26 @@
-# ---------- Build stage ----------
 FROM eclipse-temurin:17-jdk-jammy AS builder
 
-WORKDIR /dspace
+WORKDIR /build
 
 RUN apt-get update && apt-get install -y \
-    maven git curl unzip \
+    maven \
+    git \
+    curl \
+    unzip \
     && rm -rf /var/lib/apt/lists/*
 
-# Copy only required build files first (for caching)
-COPY pom.xml .
-COPY dspace/ ./dspace/
+COPY . .
 
-# Increase memory for Maven
-ENV MAVEN_OPTS="-Xmx1024m"
+RUN mvn -U clean package -DskipTests
 
-# Download dependencies first
-RUN mvn -B -q -e -DskipTests dependency:go-offline
-
-# Build DSpace
-RUN mvn -B clean package -DskipTests
-
-# ---------- Runtime stage ----------
 FROM eclipse-temurin:17-jre-jammy
 
 WORKDIR /dspace
 
-COPY --from=builder /dspace /dspace
+COPY --from=builder /build/dspace/target/dspace-installer /dspace
+
+RUN /dspace/bin/dspace install
 
 EXPOSE 8080
 
-CMD ["java","-jar","dspace-server-webapp/target/dspace-server-webapp.jar"]
+CMD ["/dspace/bin/dspace", "run"]
