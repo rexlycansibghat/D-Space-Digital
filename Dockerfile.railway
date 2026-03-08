@@ -1,7 +1,9 @@
-FROM eclipse-temurin:17-jdk-jammy
+# Multi-stage build for Railway
+FROM eclipse-temurin:17-jdk-jammy as builder
 
 WORKDIR /dspace
 
+# Install build dependencies
 RUN apt-get update && apt-get install -y \
     maven \
     git \
@@ -9,10 +11,21 @@ RUN apt-get update && apt-get install -y \
     unzip \
     && rm -rf /var/lib/apt/lists/*
 
-COPY . /dspace
+# Copy only what's needed for Maven build
+COPY pom.xml .
+COPY dspace/ ./dspace/
 
-RUN mvn -U clean package -DskipTests
+# Build DSpace
+RUN mvn -U clean package -DskipTests -Dmaven.test.skip=true -Djava.awt.headless=true
+
+# Runtime stage
+FROM eclipse-temurin:17-jre-jammy
+
+WORKDIR /dspace
+
+# Copy only the built JAR
+COPY --from=builder /dspace/dspace-server-webapp/target/dspace-server-webapp.jar .
 
 EXPOSE 8080
 
-CMD ["java","-jar","dspace-server-webapp/target/dspace-server-webapp.jar"]
+CMD ["java","-jar","dspace-server-webapp.jar"]
